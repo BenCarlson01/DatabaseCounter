@@ -15,6 +15,7 @@ public class Database {
 	*/
 	private TreeSet<String> order;
 	private HashMap<String, Integer> data;
+	private Trie trie;
 	private String name;
 	
 	/*
@@ -24,9 +25,10 @@ public class Database {
 	public Database(String name) {
 		order = new TreeSet<>(new TreeComp());
 		data = new HashMap<>();
+		trie = new Trie();
 		this.name = name;
 		try {
-            FileReader fileReader = new FileReader(name);
+            FileReader fileReader = new FileReader("Saved Databases/" + name);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = "";
             while((line = bufferedReader.readLine()) != null) {
@@ -38,14 +40,12 @@ public class Database {
                 }
                 order.add(parts[0]);
                 data.put(parts[0], Integer.parseInt(parts[1]));
+                trie.insert(parts[0]);
             }
             bufferedReader.close();         
-        }
-        catch(FileNotFoundException e) {
-    		order = new TreeSet<>();
-    		data = new HashMap<>();
-        }
-        catch(IOException e) {
+        } catch(FileNotFoundException e) {
+    		//Don't need to do anything
+        } catch(IOException e) {
             e.printStackTrace();
 		}
 	}
@@ -56,6 +56,18 @@ public class Database {
 	public void put(String n, int c) {
 		order.add(n);
 		data.put(n, c);
+		trie.insert(n);
+	}
+	
+	/*
+	 * Removes an item from the database, if it is in the database
+	 */
+	public void remove(String n) {
+		if (data.keySet().contains(n)) {
+			data.remove(n);
+			order.remove(n);
+			//Trie removeal
+		}
 	}
 	
 	/*
@@ -77,12 +89,16 @@ public class Database {
 	public HashMap<String, Integer> getMap(){ 
 		return data;
 	}
+	
+	public TreeSet<String> getPrefix(String s) {
+		return trie.getPrefix(s);
+	}
 	/*
 	 * Saves data to a text file named name
 	 */
 	public void save() {
 		try {
-			PrintWriter writer = new PrintWriter(name, "UTF-8");
+			PrintWriter writer = new PrintWriter("Saved Databases/" + name, "UTF-8");
             for (String s : order) {
     			writer.println(s + ": " + data.get(s));
             }
@@ -93,13 +109,32 @@ public class Database {
         }
 	}
 	
+	/*
+	 * Helper compare method for ordering
+	 */
+	public int comp(String a, String b) {
+		int c = a.toLowerCase().compareTo(b.toLowerCase());
+		if (c == 0) {
+			if (a.length() == 0) {
+				return 0;
+			}
+			char c1 = a.charAt(0);
+			char c2 = b.charAt(0);
+			if (c1 == c2) {
+				return 0;
+			} else if (c1 > c2) {
+				return -1;
+			} else {
+				return 1;
+			}
+		}
+		return c;
+	}
+	
 	private class TreeComp implements Comparator<String> {
 		@Override
 		public int compare(String a, String b) {
-			if (a.toLowerCase().equals(b.toLowerCase())) {
-				return a.compareTo(b);
-			}
-			return a.toLowerCase().compareTo(b.toLowerCase());
+			return comp(a, b);
 		}
 	}
 
