@@ -28,5 +28,6 @@ public class Main {
 		frame.setSize(400, 400);
 		frame.setVisible(true);
 		*/
+		
 	}
 }

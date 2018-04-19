@@ -26,6 +26,7 @@ public class TestTrieB {
 		t1.insert("temperary");
 		t1.insert("tepmle");
 		t1.insert("mfkr");
+		t1.printTrie();
 		TreeSet<String> test1 = t1.getPrefix("temp");
 		for (String s : test1) {
 			System.out.println(s);

@@ -9,6 +9,13 @@ public class Database {
 	private final Pattern format = Pattern.compile("(.*): (.*)");
 	
 	/*
+	 * Add sublist, Shows all other counts previously counted
+	 * 
+	 * 
+	 * 
+	 */
+	
+	/*
 	private HashMap<String, Integer> map;
 	private String[] names;
 	private int[] counts;

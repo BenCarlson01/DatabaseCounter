@@ -157,4 +157,58 @@ public class Trie {
 		words.addAll(getAllWords(n.right));
 		return words;
 	}
+	
+	public void printTrie() {
+		printTrieHelper(top, 1);
+	}
+	
+	private void printTrieHelper(Node cur, int spaces) {
+		if (cur == null) {
+			return;
+		}
+		System.out.print(cur.letter + ": ");
+		if (cur.left != null) {
+			System.out.print(cur.left.letter);
+		} else {
+			System.out.print("XX");
+		}
+		System.out.print(", ");
+		if (cur.center != null) {
+			System.out.print(cur.center.letter);
+		} else {
+			System.out.print("XX");
+		}
+		System.out.print(", ");
+		if (cur.right != null) {
+			System.out.print(cur.right.letter);
+		} else {
+			System.out.print("XX");
+		}
+		if (cur.name != null) {
+			System.out.print(", " + cur.name);
+		}
+		
+		System.out.println();
+		
+		if (cur.left != null) {
+			System.out.print(genSpaces(spaces) + cur.letter + "-l: ");
+			printTrieHelper(cur.left, spaces + 1);
+		}
+		if (cur.center != null) {
+			System.out.print(genSpaces(spaces) + cur.letter + "-c: ");
+			printTrieHelper(cur.center, spaces + 1);
+		}
+		if (cur.right != null) {
+			System.out.print(genSpaces(spaces) + cur.letter + "-r: ");
+			printTrieHelper(cur.right, spaces + 1);
+		}
+	}
+	
+	private String genSpaces(int spaces) {
+		String ans = "";
+		for (int i = 0; i < spaces; i++) {
+			ans += " ";
+		}
+		return ans;
+	}
 }
