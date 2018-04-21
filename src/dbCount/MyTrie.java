@@ -3,7 +3,7 @@ package dbCount;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-public class Trie {
+public class MyTrie {
 	
 	private Node top;
 	
@@ -156,6 +156,14 @@ public class Trie {
 		words.addAll(getAllWords(n.center));
 		words.addAll(getAllWords(n.right));
 		return words;
+	}
+	
+	public void remove(String s) {
+		removeHelper(top, s);
+	}
+	
+	private void removeHelper(Node cur, String s) {
+		
 	}
 	
 	public void printTrie() {
