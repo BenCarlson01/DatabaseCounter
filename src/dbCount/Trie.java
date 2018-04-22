@@ -3,7 +3,7 @@ package dbCount;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-public class MyTrie {
+public class Trie {
 	
 	private Node top;
 	
