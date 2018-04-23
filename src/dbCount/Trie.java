@@ -1,36 +1,138 @@
 package dbCount;
 
 import java.util.HashSet;
-import java.util.TreeSet;
 
 public class Trie {
 	
-	private Node top;
+	private Node root;
 	
 	private class Node {
-		private Node left;
-		private Node center;
-		private Node right;
-		private char letter;
-		private String name;
+		private Node[] children;
+		// 0-25 : a-z, 26-35 : 0-9, 36: any other character
+		private HashSet<String> names;
 		
-		private Node(char let, String name) {
-			left = null;
-			center = null;
-			right = null;
-			letter = let;
-			this.name = name;
+		private Node(String name) {
+			children = new Node[37];
+			names = new HashSet<>();
+			names.add(name);
 		}
 		
-		private Node(char let) {
-			left = null;
-			center = null;
-			right = null;
-			letter = let;
-			this.name = null;
+		private Node() {
+			children = new Node[37];
+			names = new HashSet<>();
 		}
 	}
 	
+	public Trie() {
+		root = new Node();
+	}
+	
+	private int charToInt(char c) {
+		if (Character.isDigit(c)) {
+			return c - 48 + 26;
+		}
+		c = Character.toLowerCase(c);
+		int num = c - 97;
+		if (num < 0 || num > 25) {
+			return 36;
+		}
+		return num;
+	}
+	
+	public void insert(String word) {
+		Node cur = root;
+		int i = 0;
+		for (; i < word.length(); i++) {
+			char c = word.charAt(i);
+			int in = charToInt(c);
+			if (in == -1) {
+				
+			}
+			if (cur.children[in] != null) {
+				cur = cur.children[in];
+			} else {
+				cur.children[in] = new Node();
+				cur = cur.children[in];
+			}
+		}
+		cur.names.add(word);
+	}
+	
+	public boolean contains(String word) {
+		Node cur = root;
+		int i = 0;
+		for (; i < word.length(); i++) {
+			char c = word.charAt(i);
+			int in = charToInt(c);
+			if (cur.children[in] == null) {
+				return false;
+			}
+			cur = cur.children[in];
+		}
+		return cur.names.contains(word);
+	}
+	
+	public HashSet<String> getPrefix(String prefix) {
+		Node cur = root;
+		int i = 0;
+		for (; i < prefix.length(); i++) {
+			char c = prefix.charAt(i);
+			int in = charToInt(c);
+			if (cur.children[in] == null) {
+				return new HashSet<>();
+			}
+			cur = cur.children[in];
+		}
+		return getPrefixHelper(cur);
+	}
+	
+	private HashSet<String> getPrefixHelper(Node cur) {
+		HashSet<String> ret = new HashSet<>();
+		if (cur == null) {
+			return ret;
+		}
+		ret.addAll(cur.names);
+		for (Node n : cur.children) {
+			ret.addAll(getPrefixHelper(n));
+		}
+		return ret;
+	}
+	
+	public void remove(String word) {
+		Node cur = root;
+		int i = 0;
+		for (; i < word.length(); i++) {
+			char c = word.charAt(i);
+			int in = charToInt(c);
+			if (cur.children[in] == null) {
+				return;
+			}
+			cur = cur.children[in];
+		}
+		if (cur.names.contains(word)) {
+			cur.names.remove(word);
+		}
+	}
+	
+	public void print() {
+		printHelper(root);
+	}
+	
+	private void printHelper(Node cur) {
+		if (cur == null) {
+			return;
+		}
+		for (Node n : cur.children) {
+			printHelper(n);
+		}
+		if (!cur.names.isEmpty()) {
+			for (String name : cur.names) {
+				System.out.println(name);
+			}
+		}
+	}
+	
+/*
 	public Trie() {
 		top = new Node('m');
 	}
@@ -219,4 +321,5 @@ public class Trie {
 		}
 		return ans;
 	}
+*/
 }

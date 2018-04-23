@@ -97,7 +97,7 @@ public class Database {
 		return data;
 	}
 	
-	public TreeSet<String> getPrefix(String s) {
+	public HashSet<String> getPrefix(String s) {
 		return trie.getPrefix(s);
 	}
 	/*

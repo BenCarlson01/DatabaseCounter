@@ -1,12 +1,15 @@
 package dbCount;
 
+import java.util.ArrayList;
+
 public class OtherTrie {
 	/*
 	 * Python program for delete operation in a Trie:
 	 * Obtained from https://www.geeksforgeeks.org/trie-delete/
 	 * Code contributed by Atul Kumar (www.facebook.com/atul.kumar.007)
 	 * 
-	 * Reconstructed in Java by myself
+	 * Reconstructed in Java by myself, adding a few methods for functionality 
+	 * Used for reference
 	 */
 	 
 	private class TrieNode {
@@ -167,6 +170,28 @@ public class OtherTrie {
         if (length > 0) {
             deleteHelper(root, key, 0, length); 
         }
+    }
+    
+    public ArrayList<String> getPrefix(String key) {
+    	int length = key.length();
+        TrieNode pCrawl = root;
+        char[] cKey = new char[length];
+        key.getChars(0, length, cKey, 0);
+        ArrayList<String> words = new ArrayList<>();
+        
+        for (char c : cKey) {
+            int in = index(c);
+            if (pCrawl.getChildren()[in] == null) {
+                return new ArrayList<>();
+            }
+            pCrawl = pCrawl.getChildren()[in];
+        }
+ 
+        return words;
+    }
+    
+    private ArrayList<String> getPredfixHelper(TrieNode pNode) {
+    	return null;
     }
 	 
 	/*
