@@ -73,7 +73,7 @@ public class Database {
 		if (data.keySet().contains(n)) {
 			data.remove(n);
 			order.remove(n);
-			//Trie removeal
+			trie.remove(n);
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class Database {
 		return data;
 	}
 	
-	public HashSet<String> getPrefix(String s) {
+	public TreeSet<String> getPrefix(String s) {
 		return trie.getPrefix(s);
 	}
 	/*

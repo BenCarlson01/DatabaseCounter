@@ -1,6 +1,6 @@
 package dbCount;
 
-import java.util.HashSet;
+import java.util.TreeSet;
 
 public class TestTrieB {
 	
@@ -13,7 +13,7 @@ public class TestTrieB {
 		t1.insert("hiyou");
 		//t1.print();
 		System.out.println();
-		HashSet<String> words = t1.getPrefix("hey");
+		TreeSet<String> words = t1.getPrefix("hey");
 		for (String s : words) {
 			//System.out.println(s);
 		}

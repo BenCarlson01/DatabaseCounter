@@ -10,9 +10,6 @@ public class Main {
 	 * Creates the main GUI window
 	 */
 	public static void main(String[] args) {
-		TestTrieB test = new TestTrieB();
-		test.testInsert();
-		/*
 		JFrame frame = new JFrame("Database Counter");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		MainMenuDisplay newContentPane = new MainMenuDisplay();
@@ -27,7 +24,5 @@ public class Main {
         frame.setContentPane(newContentPane);
 		frame.setSize(400, 400);
 		frame.setVisible(true);
-		*/
-		
 	}
 }

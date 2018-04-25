@@ -1,6 +1,6 @@
 package dbCount;
 
-import java.util.HashSet;
+import java.util.TreeSet;
 
 public class Trie {
 	
@@ -9,17 +9,17 @@ public class Trie {
 	private class Node {
 		private Node[] children;
 		// 0-25 : a-z, 26-35 : 0-9, 36: any other character
-		private HashSet<String> names;
+		private TreeSet<String> names;
 		
 		private Node(String name) {
 			children = new Node[37];
-			names = new HashSet<>();
+			names = new TreeSet<>();
 			names.add(name);
 		}
 		
 		private Node() {
 			children = new Node[37];
-			names = new HashSet<>();
+			names = new TreeSet<>();
 		}
 	}
 	
@@ -72,22 +72,22 @@ public class Trie {
 		return cur.names.contains(word);
 	}
 	
-	public HashSet<String> getPrefix(String prefix) {
+	public TreeSet<String> getPrefix(String prefix) {
 		Node cur = root;
 		int i = 0;
 		for (; i < prefix.length(); i++) {
 			char c = prefix.charAt(i);
 			int in = charToInt(c);
 			if (cur.children[in] == null) {
-				return new HashSet<>();
+				return new TreeSet<>();
 			}
 			cur = cur.children[in];
 		}
 		return getPrefixHelper(cur);
 	}
 	
-	private HashSet<String> getPrefixHelper(Node cur) {
-		HashSet<String> ret = new HashSet<>();
+	private TreeSet<String> getPrefixHelper(Node cur) {
+		TreeSet<String> ret = new TreeSet<>();
 		if (cur == null) {
 			return ret;
 		}

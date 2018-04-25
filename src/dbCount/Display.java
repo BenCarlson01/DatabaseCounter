@@ -20,7 +20,7 @@ public class Display extends JPanel implements ListSelectionListener {
     private static final String addString = "Add";
     private static final String removeString = "Remove";
     private JButton removeButton;
-    private JTextField itemName, itemCount, customField;
+    private JTextField itemName, itemCount, customField, searchBar;
     private JLabel itemLabel;
     private JPanel incrementPanel;
     
@@ -161,6 +161,44 @@ public class Display extends JPanel implements ListSelectionListener {
         
         boxPanel.add(addPane);
         add(boxPanel, BorderLayout.PAGE_END);
+        
+        searchBar = new JTextField(25);
+        searchBar.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				updateList();
+			}
+			  
+			public void removeUpdate(DocumentEvent e) {
+				updateList();
+			}
+			  
+			public void insertUpdate(DocumentEvent e) {
+				updateList();
+			}
+        });
+        
+        JLabel searchLabel = new JLabel("Search: ");
+        JPanel searchPane = new JPanel(new FlowLayout());
+        searchPane.add(searchLabel);
+        searchPane.add(searchBar);
+        add(searchPane, BorderLayout.PAGE_START);
+    }
+    
+    private void updateList() {
+    	String prefix = searchBar.getText();
+    	
+    	listModelNames.removeAllElements();
+    	TreeSet<String> names = db.getPrefix(prefix);
+        for (String s : names) {
+        	listModelNames.addElement(s);
+        }
+
+        listModelCounts.removeAllElements();
+        HashMap<String, Integer> count = db.getMap();
+        for (String s : names) {
+        	listModelCounts.addElement("" + count.get(s));
+        }
+    	
     }
     
     class NameListener implements ListSelectionListener {
