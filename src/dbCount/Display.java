@@ -343,19 +343,21 @@ public class Display extends JPanel implements ListSelectionListener {
                 itemName.selectAll();
                 return;
             }
-
-            int index = 0;
-            TreeSet<String> order = db.getData();
-            for (String s : order) {
-            	if (db.comp(name, s) <= 0) {
-            		break;
-            	}
-            	index++;
+            db.put(name, count);
+        	
+        	listModelNames.removeAllElements();
+        	TreeSet<String> names = db.getData();
+            for (String s : names) {
+            	listModelNames.addElement(s);
             }
 
-            listModelNames.insertElementAt(itemName.getText(), index);
-            listModelCounts.insertElementAt("" + count, index);
-            db.put(name, count);
+            listModelCounts.removeAllElements();
+            HashMap<String, Integer> counts = db.getMap();
+            for (String s : names) {
+            	listModelCounts.addElement("" + counts.get(s));
+            }
+            
+            int index = listModelNames.indexOf(name);
             //If we just wanted to add to the end, we'd do this:
             //listModelNames.addElement(itemName.getText());
 

@@ -29,12 +29,12 @@ public class Trie {
 	
 	private int charToInt(char c) {
 		if (Character.isDigit(c)) {
-			return c - 48 + 26;
+			return c - 47;
 		}
 		c = Character.toLowerCase(c);
-		int num = c - 97;
-		if (num < 0 || num > 25) {
-			return 36;
+		int num = c - 86;
+		if (num < 11 || num > 36) {
+			return 0;
 		}
 		return num;
 	}

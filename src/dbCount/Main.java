@@ -22,7 +22,7 @@ public class Main {
 		};
 		frame.addWindowListener(exitListener);
         frame.setContentPane(newContentPane);
-		frame.setSize(400, 400);
+		frame.setSize(600, 600);
 		frame.setVisible(true);
 	}
 }
