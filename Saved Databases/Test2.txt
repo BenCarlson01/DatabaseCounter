@@ -1,9 +1,0 @@
-Fun: 1
-hell: 1
-hello: 1
-Hello World: 1
-hello!@#$$%world: 1
-hello)world: 1
-Hello_WorLD: 1
-hey: 1
-None: 1

@@ -22,6 +22,7 @@ public class Database {
 	*/
 	private TreeSet<String> order;
 	private HashMap<String, Integer> data;
+	private HashMap<String, Boolean> complete;
 	private Trie trie;
 	private String name;
 	
@@ -32,6 +33,7 @@ public class Database {
 	public Database(String name) {
 		order = new TreeSet<>(new TreeComp());
 		data = new HashMap<>();
+		complete = new HashMap<>();
 		trie = new Trie();
 		this.name = name;
 		try {
@@ -40,13 +42,19 @@ public class Database {
             String line = "";
             while((line = bufferedReader.readLine()) != null) {
                 String[] parts = line.split(": ");
-                if (parts.length != 2 || !parts[1].matches("[-+]?\\d*\\.?\\d+")) {
+                if (parts.length != 3 || !parts[1].matches("[-+]?\\d*\\.?\\d+")
+                		|| !parts[2].matches("t|f")) {
                 	System.out.println("Database formatting error");// :Line " + count);
                     bufferedReader.close();  
                 	return;
                 }
                 order.add(parts[0]);
                 data.put(parts[0], Integer.parseInt(parts[1]));
+                if (parts[2].equals("t")) {
+                	complete.put(parts[0], true);
+                } else {
+                	complete.put(parts[0], false);
+                }
                 trie.insert(parts[0]);
             }
             bufferedReader.close();         
@@ -63,6 +71,7 @@ public class Database {
 	public void put(String n, int c) {
 		order.add(n);
 		data.put(n, c);
+		complete.put(n, false);
 		trie.insert(n);
 	}
 	
@@ -73,6 +82,7 @@ public class Database {
 		if (data.keySet().contains(n)) {
 			data.remove(n);
 			order.remove(n);
+			complete.remove(n);
 			trie.remove(n);
 		}
 	}
@@ -100,6 +110,15 @@ public class Database {
 	public TreeSet<String> getPrefix(String s) {
 		return trie.getPrefix(s);
 	}
+	
+	public boolean isComplete(String name) {
+		return complete.get(name);
+	}
+	
+	public void toggleComplete(String name) {
+		complete.put(name, !complete.get(name));
+	}
+	
 	/*
 	 * Saves data to a text file named name
 	 */
@@ -107,7 +126,11 @@ public class Database {
 		try {
 			PrintWriter writer = new PrintWriter("Saved Databases/" + name, "UTF-8");
             for (String s : order) {
-    			writer.println(s + ": " + data.get(s));
+            	if (complete.get(s)) {
+            		writer.println(s + ": " + data.get(s) + ": t");
+            	} else {
+            		writer.println(s + ": " + data.get(s) + ": f");
+            	}
             }
             writer.close();
         }

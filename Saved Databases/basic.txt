@@ -1,28 +1,28 @@
-!: 1
-A: 1
-a: 1
-Abes: 1
-abes: 1
-Abs: 1
-abs: 1
-Albert einse: 1
-Asbert: 1
-asdomdfasomodafmodmsafsdaf: 1
-Ass: 1
-Bitch: 1
-Bitch Fuck u: 1
-Bith: 1
-Cooldudes: 1
-Hasas: 1
-Hey: 100
-K: 871
-ta: 1
-tap: 1
-Tape: 1
-tape: 1
-Tea: 1
-Thaz right: 1
-Whats Updyou: 1
-You: 1
-zerd: 1
-ZZZtop: 1
+!: 1: f
+A: 1: f
+a: 1: f
+Abes: 1: f
+abes: 1: f
+Abs: 1: f
+abs: 1: f
+Albert einse: 1: f
+Asbert: 1: f
+asdomdfasomodafmodmsafsdaf: 1: f
+Ass: 1: f
+Bitch: 1: f
+Bitch Fuck u: 1: f
+Bith: 1: f
+Cooldudes: 1: f
+Hasas: 1: f
+Hey: 100: f
+K: 871: f
+ta: 1: f
+tap: 1: f
+Tape: 1: f
+tape: 1: f
+Tea: 1: f
+Thaz right: 1: f
+Whats Updyou: 1: f
+You: 1: f
+zerd: 1: f
+ZZZtop: 1: f

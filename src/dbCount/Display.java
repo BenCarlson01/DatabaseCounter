@@ -97,6 +97,9 @@ public class Display extends JPanel implements ListSelectionListener {
         customField.addActionListener(csListener);
         customField.getDocument().addDocumentListener(csListener);
         
+        JButton completeButton = new JButton("Toggle Complete");
+        completeButton.addActionListener(new CompleteListener());
+        
         incrementPanel.add(selectedLabel);
     	incrementPanel.add(itemLabel);
     	incrementPanel.add(plus1Button);
@@ -104,6 +107,7 @@ public class Display extends JPanel implements ListSelectionListener {
     	//incrementPanel.add(plus10Button);
     	incrementPanel.add(customButton);
     	incrementPanel.add(customField);
+    	incrementPanel.add(completeButton);
     	incrementPanel.add(removeButton);
         
     	boxPanel.add(incrementPanel);
@@ -199,6 +203,16 @@ public class Display extends JPanel implements ListSelectionListener {
         	listModelCounts.addElement("" + count.get(s));
         }
     	
+    }
+    
+    private class CompleteListener implements ActionListener {
+    	public void actionPerformed(ActionEvent e) {
+    		int cur = listNames.getSelectedIndex();
+        	if (cur != -1) {
+        		String curName = (String) listModelNames.get(cur);
+        		db.toggleComplete(curName);
+        	}
+    	}
     }
     
     class NameListener implements ListSelectionListener {
