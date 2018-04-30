@@ -1,25 +1,25 @@
 !: 1: f
-A: 1: f
 a: 1: f
-Abes: 1: f
+A: 1: f
 abes: 1: f
-Abs: 1: f
+Abes: 1: f
 abs: 1: f
+Abs: 1: f
 Albert einse: 1: f
 Asbert: 1: f
-asdomdfasomodafmodmsafsdaf: 1: f
+asdomdfasomodafmodmsafsdaf: 75898: f
 Ass: 1: f
 Bitch: 1: f
 Bitch Fuck u: 1: f
-Bith: 1: f
+Bith: 379381: t
 Cooldudes: 1: f
 Hasas: 1: f
-Hey: 100: f
+Hey: 100: t
 K: 871: f
 ta: 1: f
 tap: 1: f
-Tape: 1: f
 tape: 1: f
+Tape: 1: f
 Tea: 1: f
 Thaz right: 1: f
 Whats Updyou: 1: f

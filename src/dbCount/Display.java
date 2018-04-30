@@ -8,454 +8,470 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import dbCount.UserList.User;
 
 public class Display extends JPanel implements ListSelectionListener {
 	private static final long serialVersionUID = 1L;
 	private JList<String> listNames;
-    private DefaultListModel<String> listModelNames;
-    
-    private JList<String> listCounts;
-    private DefaultListModel<String> listModelCounts;
+	private DefaultListModel<String> listModelNames;
 
-    private static final String addString = "Add";
-    private static final String removeString = "Remove";
-    private JButton removeButton;
-    private JTextField itemName, itemCount, customField, searchBar;
-    private JLabel itemLabel;
-    private JPanel incrementPanel;
-    
-    private Database db;
+	private JList<String> listCounts;
+	private DefaultListModel<String> listModelCounts;
 
-    public Display(Database db) {
-    	super(new BorderLayout());
-    	this.db = db;
+	private static final String addString = "Add";
+	private static final String removeString = "Remove";
+	private JButton removeButton;
+	private JTextField itemName, itemCount, customField, searchBar;
+	private JLabel itemLabel;
+	private JPanel incrementPanel;
 
+	private Database db;
 
-    	itemLabel = new JLabel("None");
-        listModelNames = new DefaultListModel<>();
-        listModelCounts = new DefaultListModel<>();
-        TreeSet<String> names = db.getData();
-        for (String s : names) {
-        	listModelNames.addElement(s);
-        }
+	public Display(Database db) {
+		super(new BorderLayout());
+		this.db = db;
 
-        //Create the list and put it in a scroll pane.
-        listNames = new JList<>(listModelNames);
-        listNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listNames.setSelectedIndex(0);
-        listNames.setVisibleRowCount(5);
-        listNames.addListSelectionListener(new NameListener());
-        //JScrollPane listScrollPane = new JScrollPane(listNames);
-        
-        HashMap<String, Integer> count = db.getMap();
-        for (String s : names) {
-        	listModelCounts.addElement("" + count.get(s));
-        }
-        
+		itemLabel = new JLabel("None");
+		listModelNames = new DefaultListModel<>();
+		listModelCounts = new DefaultListModel<>();
+		TreeSet<String> names = db.getData();
+		
+		for (String s : names) {
+			listModelNames.addElement(s);
+		}
 
-        listCounts = new JList<>(listModelCounts);
-        listCounts.setSelectionModel(new NoSelectionModel());
-        JScrollPane listScrollPane = new JScrollPane(listCounts);
-        JViewport namesViewer = new JViewport();
-        namesViewer.setView(listNames);
-        listScrollPane.setRowHeader(namesViewer);
+		// Create the list and put it in a scroll pane.
+		listNames = new JList<>(listModelNames);
+		listNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listNames.setSelectedIndex(0);
+		listNames.setVisibleRowCount(5);
+		listNames.addListSelectionListener(new NameListener());
+		listNames.setCellRenderer(new DefaultListCellRenderer() {
+			private static final long serialVersionUID = 1L;
 
-        add(listScrollPane, BorderLayout.CENTER);
-        
-        
+			@Override
+			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+				String item = (String) value;
+				if (db.isComplete(item)) {
+					setBackground(Color.GREEN);
+				} else {
+					setBackground(Color.RED);
+				}
+				if (isSelected) {
+					setBackground(getBackground().darker());
+				}
+				return c;
+			}
 
-    	
-    	JPanel boxPanel = new JPanel();
-    	boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.PAGE_AXIS));
-    	
-    	incrementPanel = new JPanel();
-    	incrementPanel.setLayout(new FlowLayout());
-    	
-        removeButton = new JButton(removeString);
-        removeButton.setActionCommand(removeString);
-        removeButton.addActionListener(new RemoveListener());
-        
-        JButton plus1Button = new JButton("+1");
-        plus1Button.addActionListener(new Incrementer(1));
-        plus1Button.setPreferredSize(new Dimension(28, 20));
-        
-        JButton plus5Button = new JButton("+5");
-        plus5Button.addActionListener(new Incrementer(5));
-        
-        JButton plus10Button = new JButton("+10");
-        plus10Button.addActionListener(new Incrementer(10));
-        
-        JLabel selectedLabel = new JLabel("Selected:");
-        
-        JButton customButton = new JButton("+");
-        CustomListener csListener = new CustomListener(customButton);
-        customButton.addActionListener(csListener);
-        customButton.setPreferredSize(new Dimension(20, 20));
-        customButton.setEnabled(false);
-        
-        customField = new JTextField(4);
-        customField.addActionListener(csListener);
-        customField.getDocument().addDocumentListener(csListener);
-        
-        JButton completeButton = new JButton("Toggle Complete");
-        completeButton.addActionListener(new CompleteListener());
-        
-        incrementPanel.add(selectedLabel);
-    	incrementPanel.add(itemLabel);
-    	incrementPanel.add(plus1Button);
-    	//incrementPanel.add(plus5Button);
-    	//incrementPanel.add(plus10Button);
-    	incrementPanel.add(customButton);
-    	incrementPanel.add(customField);
-    	incrementPanel.add(completeButton);
-    	incrementPanel.add(removeButton);
-        
-    	boxPanel.add(incrementPanel);
-        
-        
+		});
+		// JScrollPane listScrollPane = new JScrollPane(listNames);
 
-        
-        JButton addButton = new JButton(addString);
-        AddListener adder = new AddListener(addButton);
-        addButton.setActionCommand(addString);
-        addButton.addActionListener(adder);
-        addButton.setEnabled(false);
+		HashMap<String, Integer> count = db.getMap();
+		for (String s : names) {
+			listModelCounts.addElement("" + count.get(s));
+		}
 
-        JLabel nameLabel = new JLabel("Name:");
-        itemName = new JTextField(10);
-        itemName.addActionListener(adder);
-        itemName.getDocument().addDocumentListener(adder);
-        
-        JLabel countLabel = new JLabel("Count:");
-        itemCount = new JTextField(4);
-        
-        JPanel addPane = new JPanel();
-        addPane.setLayout(new FlowLayout());
-        addPane.add(nameLabel);
-        addPane.add(itemName);
-        addPane.add(countLabel);
-        addPane.add(itemCount);
-        addPane.add(addButton);
-        /*
-        itemName.addActionListener(AddListener);
-        itemName.getDocument().addDocumentListener(AddListener);
-        String name = listModelNames.getElementAt(
-                              listNames.getSelectedIndex()).toString();
-        */
-        /*
-        itemName = new JTextField(10);
-        itemName.addActionListener(AddListener);
-        itemName.getDocument().addDocumentListener(AddListener);
-        String name = listModelNames.getElementAt(
-                              list.getSelectedIndex()).toString();
-                              */
+		listCounts = new JList<>(listModelCounts);
+		listCounts.setSelectionModel(new NoSelectionModel());
+		JScrollPane listScrollPane = new JScrollPane(listCounts);
+		JViewport namesViewer = new JViewport();
+		namesViewer.setView(listNames);
+		listScrollPane.setRowHeader(namesViewer);
 
+		add(listScrollPane, BorderLayout.CENTER);
 
-        //Create a panel that uses BoxLayout.
-        /*
-        buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-        buttonPane.add(removeButton);
-        buttonPane.add(Box.createHorizontalStrut(5));
-        buttonPane.add(new JSeparator(SwingConstants.VERTICAL));
-        buttonPane.add(Box.createHorizontalStrut(5));
-        buttonPane.add(itemName);
-        buttonPane.add(addButton);
-        buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        */
-        
-        boxPanel.add(addPane);
-        add(boxPanel, BorderLayout.PAGE_END);
-        
-        searchBar = new JTextField(25);
-        searchBar.getDocument().addDocumentListener(new DocumentListener() {
+		JPanel boxPanel = new JPanel();
+		boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.PAGE_AXIS));
+
+		incrementPanel = new JPanel();
+		incrementPanel.setLayout(new FlowLayout());
+
+		removeButton = new JButton(removeString);
+		removeButton.setActionCommand(removeString);
+		removeButton.addActionListener(new RemoveListener());
+
+		JButton plus1Button = new JButton("+1");
+		plus1Button.addActionListener(new Incrementer(1));
+		plus1Button.setPreferredSize(new Dimension(28, 20));
+
+		JButton plus5Button = new JButton("+5");
+		plus5Button.addActionListener(new Incrementer(5));
+
+		JButton plus10Button = new JButton("+10");
+		plus10Button.addActionListener(new Incrementer(10));
+
+		JLabel selectedLabel = new JLabel("Selected:");
+
+		JButton customButton = new JButton("+");
+		CustomListener csListener = new CustomListener(customButton);
+		customButton.addActionListener(csListener);
+		customButton.setPreferredSize(new Dimension(20, 20));
+		customButton.setEnabled(false);
+
+		customField = new JTextField(4);
+		customField.addActionListener(csListener);
+		customField.getDocument().addDocumentListener(csListener);
+
+		JButton completeButton = new JButton("Toggle Complete");
+		completeButton.addActionListener(new CompleteListener());
+
+		incrementPanel.add(selectedLabel);
+		incrementPanel.add(itemLabel);
+		incrementPanel.add(plus1Button);
+		// incrementPanel.add(plus5Button);
+		// incrementPanel.add(plus10Button);
+		incrementPanel.add(customButton);
+		incrementPanel.add(customField);
+		incrementPanel.add(completeButton);
+		incrementPanel.add(removeButton);
+
+		boxPanel.add(incrementPanel);
+
+		JButton addButton = new JButton(addString);
+		AddListener adder = new AddListener(addButton);
+		addButton.setActionCommand(addString);
+		addButton.addActionListener(adder);
+		addButton.setEnabled(false);
+
+		JLabel nameLabel = new JLabel("Name:");
+		itemName = new JTextField(10);
+		itemName.addActionListener(adder);
+		itemName.getDocument().addDocumentListener(adder);
+
+		JLabel countLabel = new JLabel("Count:");
+		itemCount = new JTextField(4);
+
+		JPanel addPane = new JPanel();
+		addPane.setLayout(new FlowLayout());
+		addPane.add(nameLabel);
+		addPane.add(itemName);
+		addPane.add(countLabel);
+		addPane.add(itemCount);
+		addPane.add(addButton);
+		/*
+		 * itemName.addActionListener(AddListener);
+		 * itemName.getDocument().addDocumentListener(AddListener); String name
+		 * = listModelNames.getElementAt(
+		 * listNames.getSelectedIndex()).toString();
+		 */
+		/*
+		 * itemName = new JTextField(10);
+		 * itemName.addActionListener(AddListener);
+		 * itemName.getDocument().addDocumentListener(AddListener); String name
+		 * = listModelNames.getElementAt( list.getSelectedIndex()).toString();
+		 */
+
+		// Create a panel that uses BoxLayout.
+		/*
+		 * buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+		 * buttonPane.add(removeButton);
+		 * buttonPane.add(Box.createHorizontalStrut(5)); buttonPane.add(new
+		 * JSeparator(SwingConstants.VERTICAL));
+		 * buttonPane.add(Box.createHorizontalStrut(5));
+		 * buttonPane.add(itemName); buttonPane.add(addButton);
+		 * buttonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		 */
+
+		boxPanel.add(addPane);
+		add(boxPanel, BorderLayout.PAGE_END);
+
+		searchBar = new JTextField(25);
+		searchBar.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				updateList();
 			}
-			  
+
 			public void removeUpdate(DocumentEvent e) {
 				updateList();
 			}
-			  
+
 			public void insertUpdate(DocumentEvent e) {
 				updateList();
 			}
-        });
-        
-        JLabel searchLabel = new JLabel("Search: ");
-        JPanel searchPane = new JPanel(new FlowLayout());
-        searchPane.add(searchLabel);
-        searchPane.add(searchBar);
-        add(searchPane, BorderLayout.PAGE_START);
-    }
-    
-    private void updateList() {
-    	String prefix = searchBar.getText();
-    	
-    	listModelNames.removeAllElements();
-    	TreeSet<String> names = db.getPrefix(prefix);
-        for (String s : names) {
-        	listModelNames.addElement(s);
-        }
+		});
 
-        listModelCounts.removeAllElements();
-        HashMap<String, Integer> count = db.getMap();
-        for (String s : names) {
-        	listModelCounts.addElement("" + count.get(s));
-        }
-    	
-    }
-    
-    private class CompleteListener implements ActionListener {
-    	public void actionPerformed(ActionEvent e) {
-    		int cur = listNames.getSelectedIndex();
-        	if (cur != -1) {
-        		String curName = (String) listModelNames.get(cur);
-        		db.toggleComplete(curName);
-        	}
-    	}
-    }
-    
-    class NameListener implements ListSelectionListener {
-    	public void valueChanged(ListSelectionEvent e) {
-        	int cur = listNames.getSelectedIndex();
-        	if (cur == -1) {
-        		removeButton.setEnabled(false);
-        	} else {
-        		removeButton.setEnabled(true);
-        		String curName = (String) listModelNames.get(cur);
-        		itemLabel.setText(curName);
-        	}
-    	}
-    }
-    
-    private class Incrementer implements ActionListener {
-    	private int amt;
-    	
-    	private Incrementer(int amount) {
-    		amt = amount;
-    	}
-    	
-    	public void actionPerformed(ActionEvent e) {
-    		int cur = listNames.getSelectedIndex();
-        	if (cur != -1) {
-        		int curCount = Integer.parseInt(listModelCounts.get(cur));
-        		curCount += amt;
-        		db.put(listNames.getSelectedValue(), curCount);
-        		listModelCounts.set(cur, "" + curCount);
-        	}
-    	}
-    }
-    
-    private class CustomListener implements ActionListener, DocumentListener {
-    	private boolean alreadyEnabled = false;
-        private JButton button;
+		JLabel searchLabel = new JLabel("Search: ");
+		JPanel searchPane = new JPanel(new FlowLayout());
+		searchPane.add(searchLabel);
+		searchPane.add(searchBar);
+		add(searchPane, BorderLayout.PAGE_START);
+	}
 
-        public CustomListener(JButton button) {
-            this.button = button;
-        }
-    	public void actionPerformed(ActionEvent e) {
-    		int cur = listNames.getSelectedIndex();
-        	if (cur != -1) {
-        		int curCount = Integer.parseInt(listModelCounts.get(cur));
-        		try {
-        			curCount += Integer.parseInt(customField.getText());
-        		} catch (NumberFormatException ex) {
-        			return;
-        		}
-        		db.put(listNames.getSelectedValue(), curCount);
-        		listModelCounts.set(cur, "" + curCount);
-        	}
-    	}
-    	
-        //Required by DocumentListener.
-        public void insertUpdate(DocumentEvent e) {
-            enableButton();
-        }
+	private void updateList() {
+		String prefix = searchBar.getText();
 
-        //Required by DocumentListener.
-        public void removeUpdate(DocumentEvent e) {
-            handleEmptyTextField(e);
-        }
+		listModelNames.removeAllElements();
+		TreeSet<String> names = db.getPrefix(prefix);
+		for (String s : names) {
+			listModelNames.addElement(s);
+		}
 
-        //Required by DocumentListener.
-        public void changedUpdate(DocumentEvent e) {
-            if (!handleEmptyTextField(e)) {
-                enableButton();
-            }
-        }
+		listModelCounts.removeAllElements();
+		HashMap<String, Integer> count = db.getMap();
+		for (String s : names) {
+			listModelCounts.addElement("" + count.get(s));
+		}
 
-        private void enableButton() {
-            if (!alreadyEnabled) {
-                button.setEnabled(true);
-            }
-        }
+	}
 
-        private boolean handleEmptyTextField(DocumentEvent e) {
-            if (e.getDocument().getLength() <= 0) {
-                button.setEnabled(false);
-                alreadyEnabled = false;
-                return true;
-            }
-            return false;
-        }
-    }
+	private class CompleteListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			int cur = listNames.getSelectedIndex();
+			if (cur != -1) {
+				String curName = (String) listModelNames.get(cur);
+				db.toggleComplete(curName);
+			}
+		}
+	}
 
-    class RemoveListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            //This method can be called only if
-            //there's a valid selection
-            //so go ahead and remove whatever's selected.
-            int index = listNames.getSelectedIndex();
-            if (index == -1) {
-            	return;
-            }
-            db.remove(listNames.getSelectedValue());
-            listModelNames.remove(index);
-            listModelCounts.remove(index);
+	class NameListener implements ListSelectionListener {
+		public void valueChanged(ListSelectionEvent e) {
+			int cur = listNames.getSelectedIndex();
+			if (cur == -1) {
+				removeButton.setEnabled(false);
+			} else {
+				removeButton.setEnabled(true);
+				String curName = (String) listModelNames.get(cur);
+				itemLabel.setText(curName);
+			}
+		}
+	}
 
-            int size = listModelNames.getSize();
+	private class Incrementer implements ActionListener {
+		private int amt;
 
-            if (size == 0) { //Nobody's left, disable firing.
-                removeButton.setEnabled(false);
+		private Incrementer(int amount) {
+			amt = amount;
+		}
 
-            } else { //Select an index.
-                if (index == listModelNames.getSize()) {
-                    //removed item in last position
-                    index--;
-                }
+		public void actionPerformed(ActionEvent e) {
+			int cur = listNames.getSelectedIndex();
+			if (cur != -1) {
+				int curCount = Integer.parseInt(listModelCounts.get(cur));
+				curCount += amt;
+				db.put(listNames.getSelectedValue(), curCount);
+				listModelCounts.set(cur, "" + curCount);
+			}
+		}
+	}
 
-                //listNames.setSelectedIndex(index);
-                //listNames.ensureIndexIsVisible(index);
-            }
-        }
-    }
+	private class CustomListener implements ActionListener, DocumentListener {
+		private boolean alreadyEnabled = false;
+		private JButton button;
 
-    //This listener is shared by the text field and the hire button.
-    class AddListener implements ActionListener, DocumentListener {
-        private boolean alreadyEnabled = false;
-        private JButton button;
+		public CustomListener(JButton button) {
+			this.button = button;
+		}
 
-        public AddListener(JButton button) {
-            this.button = button;
-        }
+		public void actionPerformed(ActionEvent e) {
+			int cur = listNames.getSelectedIndex();
+			if (cur != -1) {
+				int curCount = Integer.parseInt(listModelCounts.get(cur));
+				try {
+					curCount += Integer.parseInt(customField.getText());
+				} catch (NumberFormatException ex) {
+					return;
+				}
+				db.put(listNames.getSelectedValue(), curCount);
+				listModelCounts.set(cur, "" + curCount);
+			}
+		}
 
-        //Required by ActionListener.
-        public void actionPerformed(ActionEvent e) {
-            String name = itemName.getText();
+		// Required by DocumentListener.
+		public void insertUpdate(DocumentEvent e) {
+			enableButton();
+		}
 
-            int count;
-            try {
-            	count = Integer.parseInt(itemCount.getText());
-            } catch (NumberFormatException ex) {
-            	count = 1;
-            }
+		// Required by DocumentListener.
+		public void removeUpdate(DocumentEvent e) {
+			handleEmptyTextField(e);
+		}
 
-            //User didn't type in a unique name...
-            if (name.equals("") || alreadyInList(name)) {
-                Toolkit.getDefaultToolkit().beep();
-                itemName.requestFocusInWindow();
-                itemName.selectAll();
-                return;
-            }
-            db.put(name, count);
-        	
-        	listModelNames.removeAllElements();
-        	TreeSet<String> names = db.getData();
-            for (String s : names) {
-            	listModelNames.addElement(s);
-            }
+		// Required by DocumentListener.
+		public void changedUpdate(DocumentEvent e) {
+			if (!handleEmptyTextField(e)) {
+				enableButton();
+			}
+		}
 
-            listModelCounts.removeAllElements();
-            HashMap<String, Integer> counts = db.getMap();
-            for (String s : names) {
-            	listModelCounts.addElement("" + counts.get(s));
-            }
-            
-            int index = listModelNames.indexOf(name);
-            //If we just wanted to add to the end, we'd do this:
-            //listModelNames.addElement(itemName.getText());
+		private void enableButton() {
+			if (!alreadyEnabled) {
+				button.setEnabled(true);
+			}
+		}
 
-            //Reset the text field.
-            itemName.requestFocusInWindow();
-            itemName.setText("");
+		private boolean handleEmptyTextField(DocumentEvent e) {
+			if (e.getDocument().getLength() <= 0) {
+				button.setEnabled(false);
+				alreadyEnabled = false;
+				return true;
+			}
+			return false;
+		}
+	}
 
-            //Select the new item and make it visible.
-            listNames.setSelectedIndex(index);
-            listNames.ensureIndexIsVisible(index);
-        }
+	class RemoveListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			// This method can be called only if
+			// there's a valid selection
+			// so go ahead and remove whatever's selected.
+			int index = listNames.getSelectedIndex();
+			if (index == -1) {
+				return;
+			}
+			db.remove(listNames.getSelectedValue());
+			listModelNames.remove(index);
+			listModelCounts.remove(index);
 
-        //This method tests for string equality. You could certainly
-        //get more sophisticated about the algorithm.  For example,
-        //you might want to ignore white space and capitalization.
-        protected boolean alreadyInList(String name) {
-            return listModelNames.contains(name);
-        }
+			int size = listModelNames.getSize();
 
-        //Required by DocumentListener.
-        public void insertUpdate(DocumentEvent e) {
-            enableButton();
-        }
+			if (size == 0) { // Nobody's left, disable firing.
+				removeButton.setEnabled(false);
 
-        //Required by DocumentListener.
-        public void removeUpdate(DocumentEvent e) {
-            handleEmptyTextField(e);
-        }
+			} else { // Select an index.
+				if (index == listModelNames.getSize()) {
+					// removed item in last position
+					index--;
+				}
 
-        //Required by DocumentListener.
-        public void changedUpdate(DocumentEvent e) {
-            if (!handleEmptyTextField(e)) {
-                enableButton();
-            }
-        }
+				// listNames.setSelectedIndex(index);
+				// listNames.ensureIndexIsVisible(index);
+			}
+		}
+	}
 
-        private void enableButton() {
-            if (!alreadyEnabled) {
-                button.setEnabled(true);
-            }
-        }
+	// This listener is shared by the text field and the hire button.
+	class AddListener implements ActionListener, DocumentListener {
+		private boolean alreadyEnabled = false;
+		private JButton button;
 
-        private boolean handleEmptyTextField(DocumentEvent e) {
-            if (e.getDocument().getLength() <= 0) {
-                button.setEnabled(false);
-                alreadyEnabled = false;
-                return true;
-            }
-            return false;
-        }
-    }
+		public AddListener(JButton button) {
+			this.button = button;
+		}
 
-    //This method is required by ListSelectionListener.
-    public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting() == false) {
+		// Required by ActionListener.
+		public void actionPerformed(ActionEvent e) {
+			String name = itemName.getText();
 
-            if (listNames.getSelectedIndex() == -1) {
-            //No selection, disable remove button.
-                removeButton.setEnabled(false);
+			int count;
+			try {
+				count = Integer.parseInt(itemCount.getText());
+			} catch (NumberFormatException ex) {
+				count = 1;
+			}
 
-            } else {
-            //Selection, enable the remove button.
-                removeButton.setEnabled(true);
-            }
-        }
-    }
-    
-    private static class NoSelectionModel extends DefaultListSelectionModel {
+			// User didn't type in a unique name...
+			if (name.equals("") || alreadyInList(name)) {
+				Toolkit.getDefaultToolkit().beep();
+				itemName.requestFocusInWindow();
+				itemName.selectAll();
+				return;
+			}
+			db.put(name, count);
 
-	   /**
+			listModelNames.removeAllElements();
+			TreeSet<String> names = db.getData();
+			for (String s : names) {
+				listModelNames.addElement(s);
+			}
+
+			listModelCounts.removeAllElements();
+			HashMap<String, Integer> counts = db.getMap();
+			for (String s : names) {
+				listModelCounts.addElement("" + counts.get(s));
+			}
+
+			int index = listModelNames.indexOf(name);
+			// If we just wanted to add to the end, we'd do this:
+			// listModelNames.addElement(itemName.getText());
+
+			// Reset the text field.
+			itemName.requestFocusInWindow();
+			itemName.setText("");
+
+			// Select the new item and make it visible.
+			listNames.setSelectedIndex(index);
+			listNames.ensureIndexIsVisible(index);
+		}
+
+		// This method tests for string equality. You could certainly
+		// get more sophisticated about the algorithm. For example,
+		// you might want to ignore white space and capitalization.
+		protected boolean alreadyInList(String name) {
+			return listModelNames.contains(name);
+		}
+
+		// Required by DocumentListener.
+		public void insertUpdate(DocumentEvent e) {
+			enableButton();
+		}
+
+		// Required by DocumentListener.
+		public void removeUpdate(DocumentEvent e) {
+			handleEmptyTextField(e);
+		}
+
+		// Required by DocumentListener.
+		public void changedUpdate(DocumentEvent e) {
+			if (!handleEmptyTextField(e)) {
+				enableButton();
+			}
+		}
+
+		private void enableButton() {
+			if (!alreadyEnabled) {
+				button.setEnabled(true);
+			}
+		}
+
+		private boolean handleEmptyTextField(DocumentEvent e) {
+			if (e.getDocument().getLength() <= 0) {
+				button.setEnabled(false);
+				alreadyEnabled = false;
+				return true;
+			}
+			return false;
+		}
+	}
+
+	// This method is required by ListSelectionListener.
+	public void valueChanged(ListSelectionEvent e) {
+		if (e.getValueIsAdjusting() == false) {
+
+			if (listNames.getSelectedIndex() == -1) {
+				// No selection, disable remove button.
+				removeButton.setEnabled(false);
+
+			} else {
+				// Selection, enable the remove button.
+				removeButton.setEnabled(true);
+			}
+		}
+	}
+
+	private static class NoSelectionModel extends DefaultListSelectionModel {
+
+		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
-	@Override
-	   public void setAnchorSelectionIndex(final int anchorIndex) { }
+		@Override
+		public void setAnchorSelectionIndex(final int anchorIndex) {
+		}
 
-	   @Override
-	   public void setLeadAnchorNotificationEnabled(final boolean flag) { }
+		@Override
+		public void setLeadAnchorNotificationEnabled(final boolean flag) {
+		}
 
-	   @Override
-	   public void setLeadSelectionIndex(final int leadIndex) { }
+		@Override
+		public void setLeadSelectionIndex(final int leadIndex) {
+		}
 
-	   @Override
-	   public void setSelectionInterval(final int index0, final int index1) { }
-    } 
+		@Override
+		public void setSelectionInterval(final int index0, final int index1) {
+		}
+	}
 }
